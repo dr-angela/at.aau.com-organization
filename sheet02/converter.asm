@@ -21,36 +21,37 @@ main:				# Startpunkt des Programms
     la $t0, buffer                 # load address from buffer to $t0
 convert_loop:			   # Entry of convert_loop
     lb $t1, 0($t0)                 # Load byte at address in $t0 into $t1 (read a single character)
+    
     # Schleifenabbruch bei Nullterminierung
-    beq $t1, $zero, end_conversion
+    beq $t1, $zero, end_conversion	# Check if byte is null terminator (0); if so, jump to end_conversion to exit loop
 
     # Überprüfung, ob das Zeichen ein Kleinbuchstabe ist (a-z)
-    li $t2, 97                     # ASCII für 'a'
-    li $t3, 122                    # ASCII für 'z'
+    li $t2, 97                     # Load ASCII for 'a' into $t2
+    li $t3, 122                    # Load ASCII for 'z' into $t3
     blt $t1, $t2, check_uppercase  # if $t1 < 'a', jump to check_uppercase
     bgt $t1, $t3, check_uppercase  # if $t1 > 'z', jump to check_uppercase
     sub $t1, $t1, 32               # Konvertiere in Großbuchstaben
-    j store_character              # Speichern und nächsten Durchlauf
+    j store_character              # Jump to store character
 
 check_uppercase:
     # Überprüfung, ob das Zeichen ein Großbuchstabe ist (A-Z)
-    li $t2, 65                     # ASCII für 'A'
-    li $t3, 90                     # ASCII für 'Z'
-    blt $t1, $t2, skip_conversion  # Wenn $t1 < 'A', springe zu skip_conversion
-    bgt $t1, $t3, skip_conversion  # Wenn $t1 > 'Z', springe zu skip_conversion
+    li $t2, 65                     # Load ASCII for 'A' into $t2
+    li $t3, 90                     # Load ASCII for 'Z' into $t3
+    blt $t1, $t2, skip_conversion  # if $t1 < 'A', jump to skip_conversion
+    bgt $t1, $t3, skip_conversion  # if $t1 > 'Z', jump to skip_conversion
     add $t1, $t1, 32               # Konvertiere in Kleinbuchstaben
 
 store_character:
     # Speicher das konvertierte Zeichen
     sb $t1, 0($t0)
-    addi $t0, $t0, 1               # Zum nächsten Zeichen
-    j convert_loop                 # jump to conver:_loop: Wiederhole die Schleife
+    addi $t0, $t0, 1               # Move to next character in buffer
+    j convert_loop                 # jump to convert_loop: Repeat loop for next character
 
 skip_conversion:
     # Speicher das unveränderte Zeichen
-    sb $t1, 0($t0)
-    addi $t0, $t0, 1               # Zum nächsten Zeichen
-    j convert_loop                 # Wiederhole die Schleife
+    sb $t1, 0($t0)		   # Store unmodified character in buffer
+    addi $t0, $t0, 1               # Move to next character in buffer
+    j convert_loop                 # Repeat loop for next character
 
 end_conversion:
     # Ergebniszeichenkette ausgeben
