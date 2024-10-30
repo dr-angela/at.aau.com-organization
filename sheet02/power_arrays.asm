@@ -10,7 +10,7 @@ msg_not_power_of_two: .asciiz " ist keine Zweierpotenz.\n"
 
 main:
     # Load size of array
-    la   $t0, arraySize       	# load address from arrSize into $t0
+    la   $t0, arraySize       	# load address from arraySize into $t0
     lw   $t1, 0($t0)         	# load (word) size of array in $t1
     la   $t2, array            	# load address of array in $t2
 
@@ -21,7 +21,7 @@ loop:
     # End the loop if the index reaches the array size
     bge  $t3, $t1, end       	# branch if $t3 >= $t1 to end 
 
-    # Load the current array element
+    # Load the current array element and increment 
     lw   $t4, 0($t2)         	# load current array element into $t4
     addi $t2, $t2, 4         	# increment $t2 to point to the next element (4 byte long)
 

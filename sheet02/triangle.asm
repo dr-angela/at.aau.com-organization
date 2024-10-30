@@ -6,7 +6,7 @@ message_false: .asciiz "Dreiecksungleichung gilt NICHT\n"
 .globl main
 main:
     # Einlesen von a
-    li $v0, 5           # operating system function: Systemaufruf zum Einlesen eines Integers
+    li $v0, 5           # operating system function 5: Systemaufruf zum Einlesen eines Integers
     syscall
     move $t0, $v0       # Wert von $v0 (=a) nach $t0 kopieren
 

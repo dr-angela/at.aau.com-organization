@@ -5,7 +5,7 @@ message_prompt: .asciiz "Bitte Zeichenkette eingeben: "
 .text
 .globl main			
 
-main:				# Startpunkt des Programms
+main:				   # Startpunkt des Programms
     # Eingabeaufforderung ausgeben
     la $a0, message_prompt  	   # load address from message_prompt to $a0
     li $v0, 4                      # load immediate - Systemaufruf zum Ausgeben einer Zeichenkette
@@ -19,6 +19,7 @@ main:				# Startpunkt des Programms
 
     # Schleife über jedes Zeichen in der Zeichenkette
     la $t0, buffer                 # load address from buffer to $t0
+    
 convert_loop:			   # Entry of convert_loop
     lb $t1, 0($t0)                 # load byte at address in $t0 into $t1 (read a single character)
     
