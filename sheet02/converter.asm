@@ -8,22 +8,22 @@ message_prompt: .asciiz "Bitte Zeichenkette eingeben: "
 main:				# Startpunkt des Programms
     # Eingabeaufforderung ausgeben
     la $a0, message_prompt  	   # load address from message_prompt to $a0
-    li $v0, 4                      # Systemaufruf zum Ausgeben einer Zeichenkette
+    li $v0, 4                      # load immediate - Systemaufruf zum Ausgeben einer Zeichenkette
     syscall			   # Systemaufruf wird ausgeführt
 
     # Zeichenkette einlesen
     la $a0, buffer                 # load address from buffer to $a0
-    li $a1, 100                    # Zeichenkettenlänge in $a1 speichern
-    li $v0, 8                      # Read string syscall
+    li $a1, 100                    # load immediate - Zeichenkettenlänge in $a1 speichern
+    li $v0, 8                      # load immediate - Read string syscall
     syscall
 
     # Schleife über jedes Zeichen in der Zeichenkette
     la $t0, buffer                 # load address from buffer to $t0
 convert_loop:			   # Entry of convert_loop
-    lb $t1, 0($t0)                 # Load byte at address in $t0 into $t1 (read a single character)
+    lb $t1, 0($t0)                 # load byte at address in $t0 into $t1 (read a single character)
     
     # Schleifenabbruch bei Nullterminierung
-    beq $t1, $zero, end_conversion	# Check if byte is null terminator (0); if so, jump to end_conversion to exit loop
+    beq $t1, $zero, end_conversion	# Check if byte is null terminator (0); if yes, jump to end_conversion to exit loop
 
     # Überprüfung, ob das Zeichen ein Kleinbuchstabe ist (a-z)
     li $t2, 97                     # Load ASCII for 'a' into $t2
@@ -60,5 +60,5 @@ end_conversion:
     syscall
 
     # Programm beenden
-    li $v0, 10                     # Exit syscall
+    li $v0, 10                     # load immediate - operating system funct: 10 - Programmende
     syscall

@@ -21,45 +21,46 @@ loop:
     # End the loop if the index reaches the array size
     bge  $t3, $t1, end       	# branch if $t3 >= $t1 to end 
 
-    
-    lw   $t4, 0($t2)         # load current array element into $t4
-    addi $t2, $t2, 4         # Nächstes Array-Element (4 Byte pro Wort)
+    # Load the current array element
+    lw   $t4, 0($t2)         	# load current array element into $t4
+    addi $t2, $t2, 4         	# increment $t2 to point to the next element (4 byte long)
 
-    # Prüfe, ob $t4 eine Zweierpotenz ist
-    move $a0, $t4            # Kopiere das Element in $a0 für die Ausgabe
-    addi $t5, $t4, -1        # $t5 = n - 1
-    and  $t6, $t4, $t5       # $t6 = n AND (n - 1)
+    # Check if $t4 is power of two 
+    move $a0, $t4           	# copy the element to $a0 for output; $t4=n
+    addi $t5, $t4, -1        	# $t5 = n - 1
+    and  $t6, $t4, $t5       	# $t6 = n AND (n - 1)
     
-    # Prüfe, ob $t6 == 0 und $t4 > 0
-    beq  $t6, $zero, is_power_of_two
-    j    not_power_of_two
+    # Check if $t6 == 0 
+    beq  $t6, $zero, is_power_of_two	# branch to is_power_of_two if $t6 == 0
+    j    not_power_of_two		# otherwise jump to not_power_of_two (if $t6 != 0)
+
 
 is_power_of_two:
-    # Ausgabe: ist eine Zweierpotenz
-    li   $v0, 1              # Syscall für die Ausgabe von Integern
-    move $a0, $t4
-    syscall
+    # Output -> msg_power_of_two
+    li   $v0, 1              		# load syscall imm. number 1 for integer output
+    move $a0, $t4			
+    syscall				# execute syscall to output integer
 
-    la   $a0, msg_power_of_two  # Lade die Nachricht "ist eine Zweierpotenz"
-    li   $v0, 4                 # Syscall für das Drucken einer Zeichenkette
+    la   $a0, msg_power_of_two  	# load address from output message 
+    li   $v0, 4                 
     syscall
-    j    increment_counter      # Gehe zum Inkrementieren des Zählers
+    j    increment_counter      
 
 not_power_of_two:
-    # Ausgabe: ist keine Zweierpotenz
-    li   $v0, 1              # Syscall für die Ausgabe von Integern
+    # Output -> msg_not_power_of_two
+    li   $v0, 1              
     move $a0, $t4
     syscall
 
-    la   $a0, msg_not_power_of_two # Lade die Nachricht "ist keine Zweierpotenz"
-    li   $v0, 4                    # Syscall für das Drucken einer Zeichenkette
+    la   $a0, msg_not_power_of_two 
+    li   $v0, 4                    
     syscall
 
 increment_counter:
-    # Inkrementiere den Schleifenzähler
-    addi $t3, $t3, 1         # Erhöhe den Zähler um 1
-    j    loop                # Zurück zur Schleife
+    # Increment counter variable for loop
+    addi $t3, $t3, 1         # ++
+    j    loop                # go back to loop
 
 end:
-    li   $v0, 10             # Programm beenden
+    li   $v0, 10             # load immediate - operating system funct: 10 - Programmende
     syscall
