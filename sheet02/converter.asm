@@ -1,15 +1,15 @@
-.data
-buffer: .space 100                 # Speicher für die Eingabezeichenkette (max. 100 Zeichen)
+.data	
+buffer: .space 100                 # Reserviert eine 100 Bytes Variable namens buffer 
 message_prompt: .asciiz "Bitte Zeichenkette eingeben: "
 
 .text
-.globl main
+.globl main			
 
 main:				# Startpunkt des Programms
     # Eingabeaufforderung ausgeben
     la $a0, message_prompt  	   # load address from message_prompt to $a0
-    li $v0, 4                      # Print string syscall
-    syscall
+    li $v0, 4                      # Systemaufruf zum Ausgeben einer Zeichenkette
+    syscall			   # Systemaufruf wird ausgeführt
 
     # Zeichenkette einlesen
     la $a0, buffer                 # load address from buffer to $a0
