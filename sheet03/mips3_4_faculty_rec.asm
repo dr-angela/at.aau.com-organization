@@ -22,7 +22,7 @@ loop:
     syscall                     # Print the newline
 
     addi $t0, $t0, 1            # Increment n
-    bgt $t0, 5, end             # Stop after n = 5 to avoid overflow
+    bgt $t0, 10, end            # Stop after n = 10 to avoid overflow
     j loop                      # Repeat the loop for the next value of n
 
 end:
@@ -47,9 +47,15 @@ factorial_recursive:
     addi $sp, $sp, 4            # Deallocate space on the stack
 
     # Multiply n * factorial(n - 1) and store in $v0 with overflow check
-    mult $v0, $a0               # Multiply $v0 and $a0, result goes to LO and HI
+    multu $v0, $a0              # Multiply $v0 and $a0 using unsigned multiplication
     mflo $v0                    # Move the result from LO to $v0 (factorial result)
     mfhi $t2                    # Move the upper 32 bits (HI) to $t2 for overflow check
+
+    # Debug output: print the value of $v0 after each multiplication
+    li $v0, 1                   # Syscall code to print integer
+    move $a0, $v0               # Move result to $a0 for printing
+    syscall                     # Print $v0
+
     bne $t2, $zero, overflow    # If HI != 0, overflow occurred
 
 end_factorial_recursive:
