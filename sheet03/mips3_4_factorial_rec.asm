@@ -1,53 +1,49 @@
 .data
-newline: .asciiz "\n"  # Zeilenumbruch für bessere Formatierung der Ausgabe
+newline: .asciiz "\n"
 
 .text
 .globl main
 
 main:
-    li $t0, 0  # Startwert für n
+    li $t0, 0
 
 print_loop:
-    move $a0, $t0          # Übergebe n an die Fakultätsfunktion
-    jal factorial          # Rufe die rekursive Fakultätsfunktion auf
+    move $a0, $t0
+    jal factorial
 
-    # Ausgabe des Fakultätsergebnisses
-    move $a0, $v0          # Bereitstellen des Ergebnisses für den Druck
-    li $v0, 1              # Syscall-Code für das Drucken eines Integers
+    move $a0, $v0
+    li $v0, 1
     syscall
 
-    # Zeilenumbruch ausgeben
-    li $v0, 4              # Syscall-Code für das Drucken einer Zeichenkette
-    la $a0, newline        # Adresse des Zeilenumbruchs laden
+    li $v0, 4
+    la $a0, newline
     syscall
 
-    addi $t0, $t0, 1       # Inkrementiere n
-    ble $t0, 10, print_loop  # Wiederhole bis n = 10 erreicht ist
+    addi $t0, $t0, 1
+    ble $t0, 10, print_loop
 
 end:
-    li $v0, 10             # Syscall-Code zum Beenden des Programms
+    li $v0, 10
     syscall
 
-# Rekursive Fakultätsfunktion
 factorial:
-    beq $a0, 0, base_case  # Basisfall: Wenn n == 0, gehe zu base_case
+    beq $a0, 0, base_case
 
-    # Rekursiver Fall: f(n) = n * f(n-1)
-    addi $sp, $sp, -8      # Stack-Platz für $ra und $a0 reservieren
-    sw $a0, 0($sp)         # Aktuellen Wert von n auf den Stack legen
-    sw $ra, 4($sp)         # Rücksprungadresse auf den Stack legen
+    addi $sp, $sp, -8
+    sw $a0, 0($sp)
+    sw $ra, 4($sp)
 
-    addi $a0, $a0, -1      # Reduziere n um 1
-    jal factorial          # Rekursiver Aufruf mit n-1
+    addi $a0, $a0, -1
+    jal factorial
 
-    lw $a0, 0($sp)         # Stelle den ursprünglichen Wert von n wieder her
-    lw $ra, 4($sp)         # Stelle die Rücksprungadresse wieder her
-    addi $sp, $sp, 8       # Gebe Stack-Platz frei
+    lw $a0, 0($sp)
+    lw $ra, 4($sp)
+    addi $sp, $sp, 8
 
-    mul $v0, $v0, $a0      # Multipliziere das zurückgegebene Ergebnis mit n
+    mul $v0, $v0, $a0
 
-    jr $ra                 # Kehre zum Aufrufer zurück
+    jr $ra
 
 base_case:
-    li $v0, 1              # Rückgabewert 1, wenn n == 0
-    jr $ra                 # Kehre zum Aufrufer zurück
+    li $v0, 1
+    jr $ra
