@@ -1,64 +1,53 @@
 .data
-Fakultät1_10: .asciiz "Fakultät beträgt: " # Message for output
-newline: .asciiz "\n"                     # Newline for formatting output
+newline: .asciiz "\n"  # Zeilenumbruch für bessere Formatierung der Ausgabe
 
 .text
 .globl main
 
-# Main program
 main:
-    li $t0, 0                 # Start with n = 0
+    li $t0, 0  # Startwert für n
 
 print_loop:
-    move $a0, $t0             # Pass n to factorial function
-    jal factorial             # Call factorial(n)
+    move $a0, $t0          # Übergebe n an die Fakultätsfunktion
+    jal factorial          # Rufe die rekursive Fakultätsfunktion auf
 
-    # Display the result message
-    li $v0, 4                 # Syscall for string output
-    la $a0, Fakultät1_10      # Load address of the message
-    syscall                   # Print message
-
-    # Secure the factorial result before syscall that changes $v0
-    move $s0, $v0             # Save factorial result in $s0
-    move $a0, $s0             # Move saved result to $a0 for printing
-
-    li $v0, 1                 # Syscall for integer output
-    syscall                   # Print factorial result
-
-    # Print newline for better output formatting
-    li $v0, 4                 # Syscall for string output
-    la $a0, newline           # Load newline string
-    syscall                   # Print newline
-
-    addi $t0, $t0, 1          # Increment n
-    ble $t0, 10, print_loop   # Repeat until n = 10
-
-end:
-    li $v0, 10                # Syscall to exit
+    # Ausgabe des Fakultätsergebnisses
+    move $a0, $v0          # Bereitstellen des Ergebnisses für den Druck
+    li $v0, 1              # Syscall-Code für das Drucken eines Integers
     syscall
 
-# Recursive factorial function
+    # Zeilenumbruch ausgeben
+    li $v0, 4              # Syscall-Code für das Drucken einer Zeichenkette
+    la $a0, newline        # Adresse des Zeilenumbruchs laden
+    syscall
+
+    addi $t0, $t0, 1       # Inkrementiere n
+    ble $t0, 10, print_loop  # Wiederhole bis n = 10 erreicht ist
+
+end:
+    li $v0, 10             # Syscall-Code zum Beenden des Programms
+    syscall
+
+# Rekursive Fakultätsfunktion
 factorial:
-    # Base case: if n == 0, return 1
-    beq $a0, 0, base_case     # If n == 0, jump to base_case
+    beq $a0, 0, base_case  # Basisfall: Wenn n == 0, gehe zu base_case
 
-    # Recursive case: f(n) = n * f(n-1)
-    addi $sp, $sp, -8         # Allocate space on stack for $a0 and $ra
-    sw $a0, 0($sp)            # Save current n on stack
-    sw $ra, 4($sp)            # Save return address on stack
+    # Rekursiver Fall: f(n) = n * f(n-1)
+    addi $sp, $sp, -8      # Stack-Platz für $ra und $a0 reservieren
+    sw $a0, 0($sp)         # Aktuellen Wert von n auf den Stack legen
+    sw $ra, 4($sp)         # Rücksprungadresse auf den Stack legen
 
-    addi $a0, $a0, -1         # n - 1
-    jal factorial             # Recursive call factorial(n-1)
+    addi $a0, $a0, -1      # Reduziere n um 1
+    jal factorial          # Rekursiver Aufruf mit n-1
 
-    lw $a0, 0($sp)            # Restore original n
-    lw $ra, 4($sp)            # Restore return address
-    addi $sp, $sp, 8          # Deallocate space on stack
+    lw $a0, 0($sp)         # Stelle den ursprünglichen Wert von n wieder her
+    lw $ra, 4($sp)         # Stelle die Rücksprungadresse wieder her
+    addi $sp, $sp, 8       # Gebe Stack-Platz frei
 
-    # Multiply the returned value (in $v0) with n (in $a0)
-    mul $v0, $v0, $a0         # Multiply n * factorial(n-1)
+    mul $v0, $v0, $a0      # Multipliziere das zurückgegebene Ergebnis mit n
 
-    jr $ra                    # Return to caller
+    jr $ra                 # Kehre zum Aufrufer zurück
 
 base_case:
-    li $v0, 1                 # Set return value to 1 if n == 0
-    jr $ra                    # Return
+    li $v0, 1              # Rückgabewert 1, wenn n == 0
+    jr $ra                 # Kehre zum Aufrufer zurück
