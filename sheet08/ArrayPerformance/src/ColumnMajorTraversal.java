@@ -1,3 +1,5 @@
+// ColumnMajorTraversal.java
+
 public class ColumnMajorTraversal {
     public static void main(String[] args) {
         // Initialize a 2D array
